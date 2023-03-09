@@ -67,4 +67,16 @@ public class Client implements Comparable<Client>
     {
         return pesel != null ? pesel.hashCode() : 0;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Client{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", pesel=" + pesel +
+                ", city='" + city + '\'' +
+                '}';
+    }
 }

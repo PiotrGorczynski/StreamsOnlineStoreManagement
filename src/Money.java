@@ -20,4 +20,17 @@ public class Money {
         return currency;
     }
 
+    public enum Currency {
+        PLN,
+        EUR
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Money{" +
+                "value=" + value +
+                ", currency=" + currency +
+                '}';
+    }
 }
