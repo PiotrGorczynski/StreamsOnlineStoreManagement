@@ -30,7 +30,6 @@ public class Money {
     {
         return "Money{" +
                 "value=" + value +
-                ", currency=" + currency +
                 '}';
     }
 }

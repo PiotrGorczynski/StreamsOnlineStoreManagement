@@ -8,7 +8,7 @@ public class Purchase
     private Delivery delivery;
     private Payment payment;
     private LocalDate when;
-    private Status status = Status.PAID;
+    private final Status status;
 
     public Purchase(Client buyer, Product product, long quantity, Delivery delivery, Payment payment, LocalDate when)
     {
@@ -18,6 +18,17 @@ public class Purchase
         this.delivery = delivery;
         this.payment = payment;
         this.when = when;
+        this.status = Status.PAID;
+    }
+
+    public Purchase(Purchase purchase, Status status)
+    {
+        this.buyer = purchase.buyer;
+        this.product = purchase.product;
+        this.quantity = purchase.quantity;
+        this.delivery = purchase.delivery;
+        this.payment = purchase.payment;
+        this.when = purchase.when;
         this.status = status;
     }
 
@@ -48,12 +59,43 @@ public class Purchase
     {
         return "Purchase{" +
                 "buyer=" + buyer +
-                ", product=" + product +
-                ", quantity=" + quantity +
-                ", delivery=" + delivery +
-                ", payment=" + payment +
-                ", when=" + when +
-                ", status=" + status +
                 '}';
+    }
+
+    public Client getBuyer()
+    {
+        return buyer;
+    }
+
+    public Product getProduct()
+    {
+        return product;
+    }
+
+
+
+    public long getQuantity()
+    {
+        return quantity;
+    }
+
+    public Delivery getDelivery()
+    {
+        return delivery;
+    }
+
+    public Payment getPayment()
+    {
+        return payment;
+    }
+
+    public LocalDate getWhen()
+    {
+        return when;
+    }
+
+    public Status getStatus()
+    {
+        return status;
     }
 }

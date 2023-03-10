@@ -72,11 +72,7 @@ public class Client implements Comparable<Client>
     public String toString()
     {
         return "Client{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", pesel=" + pesel +
-                ", city='" + city + '\'' +
+                "id='" + id +
                 '}';
     }
 }
