@@ -28,6 +28,7 @@ public class Main
         //7)How much money does client spend in particular category of product?
         howMuchMoneyClientSpendInParticularCategory(purchaseList, Product.Category.GARDEN);
         statusCheck(purchaseList);
+        howManyUniqueClientsBuyItemsByEuro(purchaseList);
 
 
 
@@ -161,6 +162,26 @@ public class Main
         System.out.println("Number of purchases with DONE status: " + count);
         System.out.println("Map: " + collect);
     }
+
+    private static void howManyUniqueClientsBuyItemsByEuro(List<Purchase> purchaseList)
+    {
+        List<Purchase> euroPurchases = purchaseList.stream()
+                        .filter(p->p.getProduct().getPrice().getCurrency().equals(Money.Currency.EUR))
+                        .collect(Collectors.toList());
+
+        long count = euroPurchases.stream()
+                        .map(p->p.getBuyer())
+                        .distinct()
+                        .count();
+
+        System.out.println("Number of unique clients buying products in EUR: " + count);
+
+        Map<String,List<Purchase>> purchasesInEurByClient = euroPurchases.stream()
+                .collect(Collectors.groupingBy(p->p.getBuyer().getId()));
+        System.out.println(purchasesInEurByClient);
+    }
+
+
 
 }
 
