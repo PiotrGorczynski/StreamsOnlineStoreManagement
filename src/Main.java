@@ -8,6 +8,8 @@ import static java.util.stream.Collectors.partitioningBy;
 
 public class Main
 {
+    static final Integer CURRENT_YEAR = 2022;
+
     public static void main(String[] args)
     {
         List<Purchase> purchaseList = DataFactory.produce();
@@ -29,10 +31,9 @@ public class Main
         howManyUniqueClientsBuyItemsByEuro(purchaseList);
         mapWithYearOfClientAndBoughtProductsByYear(purchaseList);
         mapWithYearOfClientAndCategoryOfBoughtProducts(purchaseList);
-
-
         secondMostBoughtProduct(purchaseList);
 
+        structureWithAgeWorstCategoryAndTransaction(purchaseList);
 
     }
 
@@ -241,6 +242,48 @@ public class Main
 
         System.out.println(secondMostBoughtProduct);
     }
+
+
+    private static void structureWithAgeWorstCategoryAndTransaction(List<Purchase> purchaseList)
+    {
+        Map<String, Map<Product.Category, Long>> yearWithCategoriesWithoutZeros = purchaseList.stream()
+                .filter(p -> CURRENT_YEAR - (1900 + Integer.parseInt(p.getBuyer().getYearOfBirth())) > 50)
+                .collect(groupingBy(
+                        p -> p.getBuyer().getYearOfBirth(),
+                        groupingBy(
+                                p -> p.getProduct().getCategoryOfProduct(),
+                                Collectors.counting()
+                        )
+                ));
+
+        Map<String, TreeMap<Long, List<Product.Category>>> yearWithCategoriesWithZeros = yearWithCategoriesWithoutZeros.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> Arrays.stream(Product.Category.values())
+                                .collect(Collectors.toMap(
+                                        categoryKey -> e.getValue().getOrDefault(categoryKey, 0L),
+                                        List::of,
+                                        (currentList, nextList) -> Stream.concat(currentList.stream(), nextList.stream())
+                                                .collect(Collectors.toList()),
+                                        TreeMap::new))));
+
+        Map<String, Map.Entry<Long,List<Product.Category>>> yearWithMinimumEntry = yearWithCategoriesWithZeros.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e->e.getValue().entrySet().stream()
+                                .min(Map.Entry.comparingByKey())
+                                .get(),
+                        (e1,e2)->e2,
+                        TreeMap::new
+                ));
+
+        PrintingUtility.printingMap(yearWithCategoriesWithoutZeros);
+        PrintingUtility.printingMap(yearWithCategoriesWithZeros);
+        PrintingUtility.printingMap(yearWithMinimumEntry);
+
+
+    }
+
 
 
 }
