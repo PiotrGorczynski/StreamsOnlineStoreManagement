@@ -1,7 +1,5 @@
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,10 +27,24 @@ public class Main
         howMuchMoneyClientSpendInParticularCategory(purchaseList, Product.Category.GARDEN);
         statusCheck(purchaseList);
         howManyUniqueClientsBuyItemsByEuro(purchaseList);
+        mapWithYearOfClientAndBoughtProductsByYear(purchaseList);
+        mapWithYearOfClientAndCategoryOfBoughtProducts(purchaseList);
 
 
+        secondMostBoughtProduct(purchaseList);
 
 
+    }
+
+
+    private static void howManyClientsDoTheShopping(List<Purchase> purchaseList)
+    {
+        long peopleCount = purchaseList.stream()
+                .map(Purchase::getBuyer)
+                .distinct()
+                .count();
+        System.out.println(peopleCount);
+        PrintingUtility.printingList(purchaseList);
     }
 
     private static void howManyClientsPayByBlik(List<Purchase> purchaseList)
@@ -43,15 +55,7 @@ public class Main
                  .distinct()
                  .count();
         System.out.println(peopleCount);
-    }
-
-    private static void howManyClientsDoTheShopping(List<Purchase> purchaseList)
-    {
-        long peopleCount = purchaseList.stream()
-                .map(Purchase::getBuyer)
-                .distinct()
-                .count();
-        System.out.println(peopleCount);
+        System.out.println("----------");
     }
 
     private static void howManyClientsPayByCreditCard(List<Purchase> purchaseList)
@@ -94,7 +98,7 @@ public class Main
                                 p->p.getProduct().getPrice().getValue().multiply(BigDecimal.valueOf(p.getQuantity())),
                                 Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
                         )));
-        System.out.println(clients);
+        PrintingUtility.printingMap(clients);
 
     }
 
@@ -112,7 +116,7 @@ public class Main
                                 p->p.getProduct().getPrice().getValue().multiply(BigDecimal.valueOf(p.getQuantity())),
                                 Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
                         )));
-        System.out.println(clients);
+        PrintingUtility.printingMap(clients);
 
     }
 
@@ -130,7 +134,7 @@ public class Main
                                 p->p.getProduct().getPrice().getValue().multiply(BigDecimal.valueOf(p.getQuantity())),
                                 Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
                         )));
-        System.out.println(clients);
+        PrintingUtility.printingMap(clients);
 
     }
 
@@ -160,7 +164,7 @@ public class Main
 
         System.out.println("Total number of Purchases: " + purchaseList.size());
         System.out.println("Number of purchases with DONE status: " + count);
-        System.out.println("Map: " + collect);
+        PrintingUtility.printingMap(collect);
     }
 
     private static void howManyUniqueClientsBuyItemsByEuro(List<Purchase> purchaseList)
@@ -176,14 +180,73 @@ public class Main
 
         System.out.println("Number of unique clients buying products in EUR: " + count);
 
-        Map<String,List<Purchase>> purchasesInEurByClient = euroPurchases.stream()
-                .collect(Collectors.groupingBy(p->p.getBuyer().getId()));
-        System.out.println(purchasesInEurByClient);
+        //Not necessary.
+//        Map<String,List<Purchase>> purchasesInEurByClient = euroPurchases.stream()
+//                .collect(Collectors.groupingBy(p->p.getBuyer().getId()));
+//        System.out.println(purchasesInEurByClient);
     }
 
 
 
+    private static void mapWithYearOfClientAndBoughtProductsByYear(List<Purchase> purchaseList)
+    {
+        TreeMap<String, List<Product>> productsPerClientYear = purchaseList.stream()
+                .sorted(Comparator.comparing(Purchase::getBuyer))
+                .collect(groupingBy(
+                        p -> p.getBuyer().getYearOfBirth(),
+                        TreeMap::new,
+                        Collectors.mapping(p -> p.getProduct(), Collectors.toList())
+                ));
+
+        PrintingUtility.printingMap(productsPerClientYear);
+    }
+    
+    private static void mapWithYearOfClientAndCategoryOfBoughtProducts(List<Purchase> purchaseList)
+    {
+        Map<String, HashSet<Product.Category>> uniqueCategoriesByClientYear = purchaseList.stream()
+                .collect(Collectors.toMap(
+                        (Purchase p) -> p.getBuyer().getYearOfBirth(),
+                        p -> new HashSet<>(List.of(p.getProduct().getCategoryOfProduct())),
+                        (currentSet, nextCategory) ->
+                        {
+                            currentSet.addAll(nextCategory);
+                            return currentSet;
+                        }
+                ));
+        PrintingUtility.printingMap(uniqueCategoriesByClientYear);
+    }
+
+    private static void secondMostBoughtProduct(List<Purchase> purchaseList)
+    {
+        Map<String, Long> quantityPerProductId = purchaseList.stream()
+                .collect(groupingBy(
+                        p -> p.getProduct().getId(),
+                        TreeMap::new,
+                        Collectors.mapping(p -> p.getQuantity(),
+                                Collectors.reducing(0L, Long::sum)
+                        )));
+
+        PrintingUtility.printingMap(quantityPerProductId);
+
+        Comparator<? super Pair<String, Long>> pairComparator = Comparator.comparing((Pair<String, Long> p)->p.getV())
+                .reversed()
+                .thenComparing((Pair<String, Long> p) ->p.getU());
+
+        Pair<String, Long> secondMostBoughtProduct = quantityPerProductId.entrySet().stream()
+                .map(e -> new Pair<>(e.getKey(), e.getValue()))
+                .sorted(pairComparator)
+                .skip(1)
+                .findFirst()
+                .orElse(new Pair<>("default", 0L));
+
+        System.out.println(secondMostBoughtProduct);
+    }
+
+
 }
+
+
+
 
 
 

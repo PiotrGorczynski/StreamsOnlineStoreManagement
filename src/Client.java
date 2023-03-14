@@ -44,6 +44,11 @@ public class Client implements Comparable<Client>
         return pesel;
     }
 
+    public String getYearOfBirth()
+    {
+        return pesel.toString().substring(0,2);
+    }
+
     public String getCity()
     {
         return city;
