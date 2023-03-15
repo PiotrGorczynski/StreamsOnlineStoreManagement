@@ -1,3 +1,5 @@
+package model;
+
 import java.math.BigInteger;
 
 public class Client implements Comparable<Client>

@@ -1,3 +1,5 @@
+package utils;
+
 public class Pair<U, V>
 {
     private final U u;

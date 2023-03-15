@@ -1,3 +1,10 @@
+package model;
+
+import model.Client;
+import model.Money;
+import model.Product;
+import model.Purchase;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -51,7 +58,7 @@ public class DataFactory {
         Product product24 = new Product("product24", "Konsola", Product.Category.HOBBY, new Money(new BigDecimal("15.99"), Money.Currency.PLN));
         Product product25 = new Product("product25", "Książka", Product.Category.HOBBY, new Money(new BigDecimal("19.99"), Money.Currency.EUR));
 
-        // Purchase
+        // model.Purchase
         purchaseList.add(new Purchase(client0, product1, 7, Purchase.Delivery.DHL, Purchase.Payment.BLIK, LocalDate.of(2020, 7, 12)));
         purchaseList.add(new Purchase(client0, product17, 2, Purchase.Delivery.IN_POST, Purchase.Payment.BLIK, LocalDate.of(2020, 2, 12)));
         purchaseList.add(new Purchase(client1, product18, 1, Purchase.Delivery.IN_POST, Purchase.Payment.BLIK, LocalDate.of(2020, 1, 5)));

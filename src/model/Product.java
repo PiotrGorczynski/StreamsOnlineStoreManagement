@@ -1,3 +1,5 @@
+package model;
+
 public class Product implements Comparable<Product> {
     private final String id;
     private final String name;
